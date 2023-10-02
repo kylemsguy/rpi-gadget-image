@@ -1,5 +1,5 @@
 [Unit]
-Description=My USB gadget
+Description=Multigadget
 After=network-online.target
 Wants=network-online.target
 #After=systemd-modules-load.service
@@ -7,7 +7,7 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/local/sbin/usb-gadget.sh
+ExecStart=/usr/local/sbin/multigadget
  
 [Install]
 WantedBy=sysinit.target

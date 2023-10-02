@@ -8,15 +8,7 @@ proc slurp {file} {
     return $ret
 }
 
-if { $argc == 1 } {
-  set imageName [lindex $argv 0]
-  set 64bit "false"
-  puts "32bit"
-} elseif { $argc == 2 } {
-  set imageName [lindex $argv 1]
-  set 64bit "true"
-  puts "64bit"
-}
+set imageName [lindex $argv 0]
 
 if {[string trimleft $imageName] eq ""} {
   puts "No Image file provided"
@@ -28,28 +20,62 @@ set imagePath [file join $cwd $imageName]
 puts $imageName
 puts $imagePath\n
 
-if { $64bit == "true" } {
-  spawn docker run --name dockerpi -it --rm -v $imagePath:/sdcard/filesystem.img lukechilds/dockerpi:vm pi3
-} else {
-  spawn docker run --name dockerpi -it --rm -v $imagePath:/sdcard/filesystem.img lukechilds/dockerpi:vm 
-}
+spawn docker run --name dockerpi -it --rm -v $imagePath:/sdcard/filesystem.img lukechilds/dockerpi:vm pi3
 
 expect "raspberrypi login: "
-send "pi\n"
+send $env(USERNAME)
+send "\n"
 expect "Password: "
 #send "raspberry\n"
 send $env(PASSWORD)
 send "\n"
 
+####################
+# INSTALL PACKAGES #
+####################
 expect "$ "
 send "sudo apt-get update\n"
 expect "$ "
-send "sudo apt-get -y install dnsmasq\n"
+# send "sudo apt-get -y upgrade\n"
+# expect "$ "
+send "sudo apt-get -y install dnsmasq network-manager\n"
 expect "$ "
 send "sudo apt-get clean\n"
+
+###########################
+# ACTIVATE NETWORKMANAGER #
+###########################
+
+expect "$ "
+send "sudo systemctl enable --now NetworkManager\n"
+
+#################
+# INSTALL CODER #
+#################
+
+# install coder
+expect "$ "
+send "sudo curl -fsSL https://raw.githubusercontent.com/coder/code-server/main/install.sh | sh\n"
+
+expect "$ "
+send "sudo systemctl enable --now code-server@\$USER\n"
+
+# configure coder
+set file [slurp "userhome/.config/code-server/config.yaml"]
+expect "$ "
+send "sudo bash -c 'cat > ~/.config/code-server/config.yaml' << EOF\n"
+send "$file\n"
+send "EOF\n"
+
+###################
+# SWITCH TO ROOT  #
+###################
 expect "$ "
 send "sudo su -\n"
 
+########################
+# CONFIGURE DNS SERVER #
+########################
 set file [slurp "etc/dnsmasq.d/usb0"]
 expect "# "
 send "cat <<EOF >> /etc/dnsmasq.d/usb0\n"
@@ -62,43 +88,74 @@ send "cat <<EOF >> /etc/network/interfaces.d/usb0\n"
 send "$file\n"
 send "EOF\n"
 
-set file [slurp "usr/local/sbin/usb-gadget.sh"]
+
+########################
+# CONFIGURE USB GADGET #
+########################
+set file [slurp "usr/local/sbin/multigadget"]
 expect "# "
-send "cat <<EOF >> /usr/local/sbin/usb-gadget.sh\n"
+send "cat <<EOF >> /usr/local/sbin/multigadget\n"
 send "$file\n"
 send "EOF\n"
 expect "# "
-send "chmod +x /usr/local/sbin/usb-gadget.sh\n"
+send "chmod +x /usr/local/sbin/multigadget\n"
 
-set file [slurp "lib/systemd/system/usbgadget.service"]
+set file [slurp "lib/systemd/system/multigadget.service"]
 expect "# "
-send "cat <<EOF >> /lib/systemd/system/usbgadget.service\n"
+send "cat <<EOF >> /lib/systemd/system/multigadget.service\n"
 send "$file\n"
 send "EOF\n"
 expect "# "
-send "systemctl enable usbgadget.service\n"
+send "systemctl enable multigadget.service\n"
 
+
+####################
+# CONFIGURE KERNEL #
+####################
 expect "# "
 send "echo dtoverlay=dwc2 >> /boot/config.txt\n"
-
-expect "# "
-send "sed -i 's/$/ modules-load=dwc2/' /boot/cmdline.txt \n"
 
 expect "# "
 send "touch /boot/ssh\n"
 
 expect "# "
+send "echo dwc2 >> /etc/modules\n"
 send "echo libcomposite >> /etc/modules\n"
 
-expect "# "
-send "echo denyinterfaces usb0 usb1 br0 >> /etc/dhcpcd.conf\n"
 
-expect "# "
-send "sudo systemctl enable getty@ttyGS0.service\n"
 
+##################
+# CONFIGURE DHCP #
+##################
 expect "# "
+send "echo denyinterfaces usb0 br0 >> /etc/dhcpcd.conf\n"
+
+##########################
+# ENABLE NETWORK MANAGER #
+##########################
+expect "# "
+send "raspi-config nonint do_netconf 2\n"
+
+################
+# SET HOSTNAME #
+################
+expect "# "
+send "raspi-config nonint do_hostname "
+send $env(HOSTNAME)
+send "\n"
+
+##############
+# ENABLE SSH #
+##############
+expect "# "
+send "raspi-config nonint do_ssh 0\n"
+expect "# "
+
+##########
+# FINISH #
+##########
 send "poweroff\n"
 
-expect "Reboot failed -- System halted"
+expect "reboot: Power down"
 exec docker stop dockerpi
 exit
