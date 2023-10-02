@@ -1,0 +1,131 @@
+#!/bin/bash
+
+#############
+# VARIABLES #
+#############
+# USB Device Information
+VENDOR_ID="0x1d6b"  # Linux Foundation
+PRODUCT_ID="0x0104" # Multifunction Composite Gadget
+SERIAL="fedcba9876543210"
+MANUFACTURER="VaneixusPrime"
+PRODUCT="RaspberryPi Multi-Gadget Device"
+LANGUAGE="0x409" # English
+
+# USB Device Functions
+ENABLE_SERIAL=true
+ENABLE_NETWORKING=true
+HOST_IS_LINUX=true
+
+# ECM Network Information
+HOST="48:6f:73:74:50:43" # "HostPC"
+SELF_ECM="42:61:64:55:53:42"
+SELF_NDIS="42:61:64:55:53:43"
+
+
+cd /sys/kernel/config/usb_gadget/ || exit 1
+mkdir -p multigadget
+cd multigadget || exit 1
+
+# USB DEVICE CONFIGURATION
+###########################
+echo \$VENDOR_ID > idVendor
+echo \$PRODUCT_ID > idProduct
+
+# USB CONNECTION CONFIGURATION
+###############################
+echo 0x0101 > bcdDevice # v1.0.0
+echo 0x0200 > bcdUSB # USB2
+echo 0xEF > bDeviceClass
+echo 0x02 > bDeviceSubClass
+echo 0x01 > bDeviceProtocol
+echo 0x40 > bMaxPacketSize0
+
+ln -s configs/c.1 os_desc
+
+echo \$LANGUAGE > language
+mkdir -p strings/\$LANGUAGE
+echo "\$SERIAL"        > strings/\$LANGUAGE/serialnumber
+echo "\$MANUFACTURER"  > strings/\$LANGUAGE/manufacturer
+echo "\$PRODUCT"       > strings/\$LANGUAGE/product
+
+# CONFIG 1
+###########
+if [ "\$HOST_IS_LINUX" = false ]; then
+  mkdir -p configs/c.1/strings/\$LANGUAGE
+  echo "RNDIS" > configs/c.1/strings/\$LANGUAGE/configuration
+  echo 250 > configs/c.1/MaxPower
+fi
+
+
+# CONFIG 2
+###########
+if [ "\$HOST_IS_LINUX" = true ]; then
+  mkdir -p configs/c.2/strings/0x409
+  echo "ECM" > configs/c.2/strings/\$LANGUAGE/configuration
+  echo 250 > configs/c.2/MaxPower
+fi
+
+
+# Microsoft OS Descriptors
+###########################
+echo "1" > os_desc/use
+echo "0xbc" > os_desc/b_vendor_code
+echo "MSFT100" > os_desc/qw_sign
+
+
+###################
+# Start functions #
+###################
+
+# Ethernet
+###########
+if [ "\$ENABLE_NETWORKING" = true ]; then
+  # RNDIS
+  if [ "\$HOST_IS_LINUX" = false ]; then
+    mkdir -p functions/rndis.usb0
+
+    echo \$HOST > functions/rndis.usb0/host_addr
+    echo \$SELF_NDIS > functions/rndis.usb0/dev_addr
+    echo "RNDIS"   > functions/rndis.usb0/os_desc/interface.rndis/compatible_id
+    echo "5162001" > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
+
+    ln -s functions/rndis.usb0 configs/c.1/
+  fi
+
+  # CDC ECM
+  if [ "\$HOST_IS_LINUX" = true ]; then
+    mkdir -p functions/ecm.usb0
+
+    echo \$HOST > functions/ecm.usb0/host_addr
+    echo \$SELF_ECM > functions/ecm.usb0/
+
+    ln -s functions/ecm.usb0 configs/c.2/
+  fi
+fi
+
+
+
+# Serial
+#########
+if [ "\$ENABLE_SERIAL" = true ]; then
+  mkdir -p functions/acm.usb1
+  if [ "\$HOST_IS_LINUX" = true ]; then
+    ln -s functions/acm.usb1 configs/c.2/
+  fi
+
+  if [ "\$HOST_IS_LINUX" = false ]; then
+    ln -s functions/acm.usb1 configs/c.1/
+  fi
+
+  sudo systemctl enable getty@ttyGS0.service
+fi
+
+#################
+# End functions #
+#################
+
+ls /sys/class/udc > UDC
+
+# # Network Config
+ifconfig usb0 172.16.0.1 netmask 255.255.255.248 up
+#route add -net default gw 172.16.0.2
