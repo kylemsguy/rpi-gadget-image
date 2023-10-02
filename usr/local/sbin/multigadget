@@ -40,8 +40,6 @@ echo 0x02 > bDeviceSubClass
 echo 0x01 > bDeviceProtocol
 echo 0x40 > bMaxPacketSize0
 
-ln -s configs/c.1 os_desc
-
 echo \$LANGUAGE > language
 mkdir -p strings/\$LANGUAGE
 echo "\$SERIAL"        > strings/\$LANGUAGE/serialnumber
