@@ -65,9 +65,15 @@ send "sudo sed -i '/^\\\[Service\\\]/a AmbientCapabilities=CAP_NET_BIND_SERVICE'
 
 
 # configure coder
-set file [slurp "userhome/.config/code-server/config.yaml"]
+send "sudo mkdir -p ~/.config/code-server\n"
+
 expect "$ "
-send "sudo bash -c 'cat > ~/.config/code-server/config.yaml' << EOF\n"
+set file [slurp "userhome/.config/code-server/config.yaml"]
+
+expect "$ "
+send "sudo bash -c 'cat > /home/"
+send $env(USERNAME)
+send "/.config/code-server/config.yaml' << EOF\n"
 send "$file\n"
 send "EOF\n"
 
