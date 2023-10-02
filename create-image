@@ -98,6 +98,9 @@ send "cat << EOF > /etc/caddy/Caddyfile\n"
 send "$file\n"
 send "EOF\n"
 
+expect "$ "
+send "sudo systemctl reload caddy\n"
+
 ###################
 # SWITCH TO ROOT  #
 ###################
