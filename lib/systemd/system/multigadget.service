@@ -1,8 +1,7 @@
 [Unit]
 Description=Multigadget
-After=network-online.target
-Wants=network-online.target
-#After=systemd-modules-load.service
+Before=network-pre.target
+Wants=network-pre.target
  
 [Service]
 Type=oneshot
