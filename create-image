@@ -94,13 +94,13 @@ send "sudo brctl addbr br0\n"
 ########################
 set file [slurp "etc/dnsmasq.d/usb0"]
 expect "# "
-send "cat <<EOF >> /etc/dnsmasq.d/usb0\n"
+send "cat << 'EOF' >> /etc/dnsmasq.d/usb0\n"
 send "$file\n"
 send "EOF\n"
 
 set file [slurp "etc/network/interfaces.d/usb0"]
 expect "# "
-send "cat <<EOF >> /etc/network/interfaces.d/usb0\n"
+send "cat << 'EOF' >> /etc/network/interfaces.d/usb0\n"
 send "$file\n"
 send "EOF\n"
 
@@ -110,7 +110,7 @@ send "EOF\n"
 ########################
 set file [slurp "usr/local/sbin/multigadget"]
 expect "# "
-send "cat <<EOF >> /usr/local/sbin/multigadget\n"
+send "cat << 'EOF' >> /usr/local/sbin/multigadget\n"
 send "$file\n"
 send "EOF\n"
 expect "# "
@@ -118,7 +118,7 @@ send "chmod +x /usr/local/sbin/multigadget\n"
 
 set file [slurp "lib/systemd/system/multigadget.service"]
 expect "# "
-send "cat <<EOF >> /lib/systemd/system/multigadget.service\n"
+send "cat << 'EOF' >> /lib/systemd/system/multigadget.service\n"
 send "$file\n"
 send "EOF\n"
 expect "# "
