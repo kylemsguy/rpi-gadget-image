@@ -1,0 +1,7 @@
+$HOSTNAME/code/* {
+  @denied not 192.16.0.1/30
+  respond @denied "Access denied" 403
+
+  uri strip_prefix /code
+  reverse_proxy 127.0.0.1:8080
+}

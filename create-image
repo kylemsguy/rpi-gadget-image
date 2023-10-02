@@ -38,7 +38,7 @@ send "sudo apt-get update\n"
 expect "$ "
 # send "sudo apt-get -y upgrade\n"
 # expect "$ "
-send "sudo apt-get -y install dnsmasq network-manager bridge-utils\n"
+send "sudo apt-get -y install dnsmasq network-manager bridge-utils debian-keyring debian-archive-keyring apt-transport-https\n"
 expect "$ "
 send "sudo apt-get clean\n"
 
@@ -74,6 +74,28 @@ expect "$ "
 send "sudo bash -c 'cat > /home/"
 send $env(USERNAME)
 send "/.config/code-server/config.yaml' << EOF\n"
+send "$file\n"
+send "EOF\n"
+
+#################
+# INSTALL CADDY #
+#################
+expect "$ "
+send "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg\n"
+
+expect "$ "
+send "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list\n"
+
+expect "$ "
+send "sudo apt-get update\n"
+
+expect "$ "
+send "sudo apt-get install caddy\n"
+
+expect "$ "
+set file [slurp "etc/caddy/Caddyfile"]
+expect "# "
+send "cat << EOF >> /etc/caddy/Caddyfile\n"
 send "$file\n"
 send "EOF\n"
 
