@@ -38,7 +38,7 @@ send "sudo apt-get update\n"
 expect "$ "
 # send "sudo apt-get -y upgrade\n"
 # expect "$ "
-send "sudo apt-get -y install dnsmasq network-manager\n"
+send "sudo apt-get -y install dnsmasq network-manager bridge-utils\n"
 expect "$ "
 send "sudo apt-get clean\n"
 
@@ -82,6 +82,12 @@ send "EOF\n"
 ###################
 expect "$ "
 send "sudo su -\n"
+
+########################
+# SETUP NETWORK BRIDGE #
+########################
+expect "# "
+send "sudo brctl addbr br0\n"
 
 ########################
 # CONFIGURE DNS SERVER #
