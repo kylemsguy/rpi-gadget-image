@@ -25,16 +25,19 @@ if [[ $# -eq 0 ]]; then
   RASPIAN_OS_FILE="$RASPIAN_OS_RELEASE_DATE-raspios-$RASPIAN_OS_VERSION-arm64-lite.img"
 
   if [ ! -f "$RASPIAN_OS_FILE" ]; then
-    echo "Downloading $RASPIAN_OS_FILE.xz from https://downloads.raspberrypi.org/."
-    curl -s "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-$RASPIAN_OS_RELEASE_DATE/$RASPIAN_OS_FILE.xz" -o "$RASPIAN_OS_FILE.xz"
-    echo "Unpacking $RASPIAN_OS_FILE.xz"
-    xz -d "$RASPIAN_OS_FILE.xz"
+    echo "Could not find latest Raspian OS image locally."
+    if [ ! -f "$RASPIAN_OS_FILE.bak" ]; then
+      echo "Could not find backup of latest Raspian OS image."
+      echo "Downloading $RASPIAN_OS_FILE.xz from https://downloads.raspberrypi.org/."
+      curl -s "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-$RASPIAN_OS_RELEASE_DATE/$RASPIAN_OS_FILE.xz" -o "$RASPIAN_OS_FILE.xz"
+      echo "Unpacking $RASPIAN_OS_FILE.xz"
+      xz -d "$RASPIAN_OS_FILE.xz"
+      cp "$RASPIAN_OS_FILE" "$RASPIAN_OS_FILE.bak"
+    else
+      echo "Using backup of Raspian OS image."
+      cp "$RASPIAN_OS_FILE.bak" "$RASPIAN_OS_FILE"
+    fi
   fi
-fi
-
-if [ ! -f "$RASPIAN_OS_FILE" ]; then
-  echo "Could not find Raspian OS image."
-  exit 1
 fi
 
 if [ ! -x "$(command -v qemu-img)" ]; then
