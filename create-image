@@ -192,6 +192,12 @@ expect "# "
 send "raspi-config nonint do_ssh 0\n"
 expect "# "
 
+############################
+# CONFIGURE RealVNC Server #
+############################
+expect "$ "
+send "sudo raspi-config nonint do_vnc 0"
+
 ##########
 # FINISH #
 ##########
