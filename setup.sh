@@ -50,8 +50,11 @@ if [ ! -x "$(command -v parted)" ]; then
   apt-get install -y parted
 fi
 
-echo "Resizing $RASPIAN_OS_FILE to 8 GB."
-qemu-img resize "$RASPIAN_OS_FILE" 8G
+CURRENT_SIZE=$(qemu-img info "$RASPIAN_OS_FILE" | grep 'virtual size' | awk '{print $3}')
+IMG_SIZE_POW_2=$(echo "x=l($CURRENT_SIZE)/l(2); scale=0; 2^((x+0.99)/1)" | bc -l;)
+
+echo "Resizing $RASPIAN_OS_FILE to $IMG_SIZE_POW_2 GB."
+qemu-img resize "$RASPIAN_OS_FILE" "${IMG_SIZE_POW_2}G"
 
 echo "Resizing root partition to fill new space."
 parted -s "$RASPIAN_OS_FILE" resizepart 2 100%
