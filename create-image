@@ -23,6 +23,8 @@ puts $imagePath\n
 spawn docker run --name dockerpi -it --rm -v $imagePath:/sdcard/filesystem.img lukechilds/dockerpi:vm pi3
 
 expect "raspberrypi login: "
+#TODO: Make sure to find a more elegant solution to this.
+sleep 30
 send $env(USERNAME)
 send "\n"
 expect "Password: "
