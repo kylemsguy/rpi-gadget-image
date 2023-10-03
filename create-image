@@ -28,7 +28,6 @@ sleep 30
 send $env(USERNAME)
 send "\n"
 expect "Password: "
-#send "raspberry\n"
 send $env(PASSWORD)
 send "\n"
 
@@ -96,7 +95,7 @@ send "sudo apt-get install caddy\n"
 
 set file [slurp "etc/caddy/Caddyfile"]
 expect "$ "
-send "cat << EOF > /etc/caddy/Caddyfile\n"
+send "sudo bash -c 'cat > /etc/caddy/Caddyfile' << EOF\n"
 send "$file\n"
 send "EOF\n"
 
