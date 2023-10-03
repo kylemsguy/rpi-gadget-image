@@ -14,22 +14,22 @@ fi
 
 
 if [[ $# -eq 0 ]]; then
-  RASPIAN_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
-  RASPIAN_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
+  RASPIAN_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_lite_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
+  RASPIAN_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_lite_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
 
   if [[ -z "$RASPIAN_OS_VERSION" || -z "$RASPIAN_OS_RELEASE_DATE" ]]; then
     echo "Could not determine latest Raspian OS version."
     exit 1
   fi
 
-  RASPIAN_OS_FILE="$RASPIAN_OS_RELEASE_DATE-raspios-$RASPIAN_OS_VERSION-arm64-full.img"
+  RASPIAN_OS_FILE="$RASPIAN_OS_RELEASE_DATE-raspios-$RASPIAN_OS_VERSION-arm64-lite.img"
 
   if [ ! -f "$RASPIAN_OS_FILE" ]; then
     echo "Could not find latest Raspian OS image locally."
     if [ ! -f "$RASPIAN_OS_FILE.bak" ]; then
       echo "Could not find backup of latest Raspian OS image."
       echo "Downloading $RASPIAN_OS_FILE.xz from https://downloads.raspberrypi.org/."
-      curl -s "https://downloads.raspberrypi.org/raspios_full_arm64/images/raspios_full_arm64-$RASPIAN_OS_RELEASE_DATE/$RASPIAN_OS_FILE.xz" -o "$RASPIAN_OS_FILE.xz"
+      curl -s "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-$RASPIAN_OS_RELEASE_DATE/$RASPIAN_OS_FILE.xz" -o "$RASPIAN_OS_FILE.xz"
       echo "Unpacking $RASPIAN_OS_FILE.xz"
       xz -d "$RASPIAN_OS_FILE.xz"
       cp "$RASPIAN_OS_FILE" "$RASPIAN_OS_FILE.bak"
