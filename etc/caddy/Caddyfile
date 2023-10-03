@@ -1,7 +1,14 @@
 $HOSTNAME/code/* {
-  @denied not 192.16.0.1/30
-  respond @denied "Access denied" 403
+  tls internal
 
-  uri strip_prefix /code
-  reverse_proxy 127.0.0.1:8080
+  @gadget_host {
+    remote_ip forwarded 192.16.0.2
+  }
+
+  handle @gadget_host {
+    uri strip_prefix /code
+    reverse_proxy 127.0.0.1:8080
+  }
+
+  respond "Access denied" 403
 }
