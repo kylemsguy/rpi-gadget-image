@@ -24,14 +24,12 @@ LANGUAGE="0x409" # English
 
 # USB Device Functions
 CONFIG_1="RNDIS"
-CONFIG_2="CDC"
 
 ENABLE_SERIAL=true
 ENABLE_NETWORKING=true
 
 # ECM Network Information
 HOST="48:6f:73:74:50:43" # "HostPC"
-SELF_ECM="42:61:64:55:53:42"
 SELF_NDIS="42:61:64:55:53:43"
 
 # Microsoft OS Descriptors
@@ -71,12 +69,7 @@ mkdir -p configs/c.1/strings/$LANGUAGE
 echo $CONFIG_1  > configs/c.1/strings/$LANGUAGE/configuration
 echo $MAX_POWER > configs/c.1/MaxPower
 
-
-# CONFIG 2
-###########
-mkdir -p configs/c.2/strings/$LANGUAGE
-echo $CONFIG_2  > configs/c.2/strings/$LANGUAGE/configuration
-echo $MAX_POWER > configs/c.2/MaxPower
+ln -s configs.c1 os_desc
 
 
 # Microsoft OS Descriptors
@@ -93,7 +86,6 @@ echo $MS_QW_SIGN     > os_desc/qw_sign
 # Ethernet
 ###########
 if [ "$ENABLE_NETWORKING" = true ]; then
-  # RNDIS
   mkdir -p functions/rndis.usb0
 
   echo $HOST                  > functions/rndis.usb0/host_addr
@@ -102,22 +94,13 @@ if [ "$ENABLE_NETWORKING" = true ]; then
   echo $MS_SUB_COMPATIBLE_ID  > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
 
   ln -s functions/rndis.usb0 configs/c.1/
-
-  # CDC ECM
-  mkdir -p functions/ecm.usb0
-
-  echo $HOST      > functions/ecm.usb0/host_addr
-  echo $SELF_ECM  > functions/ecm.usb0/dev_addr
-
-  ln -s functions/ecm.usb0 configs/c.2/
 fi
 
 # Serial
 #########
 if [ "$ENABLE_SERIAL" = true ]; then
   mkdir -p functions/acm.usb0
-  
-  ln -s functions/acm.usb0 configs/c.2/
+
   ln -s functions/acm.usb0 configs/c.1/
 
   sudo systemctl enable getty@ttyGS0.service
