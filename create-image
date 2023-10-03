@@ -36,10 +36,13 @@ send "\n"
 ####################
 expect "$ "
 send "sudo apt-get update\n"
+
 expect "$ "
 # send "sudo apt-get -y upgrade\n"
+
 # expect "$ "
 send "sudo apt-get -y install dnsmasq network-manager bridge-utils debian-keyring debian-archive-keyring apt-transport-https\n"
+
 expect "$ "
 send "sudo apt-get clean\n"
 
@@ -49,6 +52,7 @@ send "sudo apt-get clean\n"
 
 expect "$ "
 send "sudo systemctl enable --now NetworkManager\n"
+
 
 #################
 # INSTALL CODER #
@@ -195,8 +199,8 @@ expect "# "
 ############################
 # CONFIGURE RealVNC Server #
 ############################
-expect "$ "
-send "sudo raspi-config nonint do_vnc 0"
+expect "# "
+send "sudo raspi-config nonint do_vnc 0\n"
 
 ##########
 # FINISH #
