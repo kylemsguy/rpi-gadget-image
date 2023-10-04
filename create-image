@@ -31,6 +31,14 @@ expect "Password: "
 send $env(PASSWORD)
 send "\n"
 
+#############################
+# TEMPORARY HOSTNAME CHANGE #
+#############################
+expect "$ "
+send "sudo hostname"
+send $env(HOSTNAME)
+"\n"
+
 ####################
 # INSTALL PACKAGES #
 ####################
@@ -216,7 +224,34 @@ expect "# "
 # CONFIGURE RealVNC Server #
 ############################
 expect "# "
-send "sudo raspi-config nonint do_vnc 0\n"
+send "raspi-config nonint do_vnc 0\n"
+
+#############################
+# CONFIGURE TightVNC Server #
+#############################
+expect "# "
+send "apt-get install tigervnc-standalone-server xfonts-scalable xfonts-100dpi xfonts-75dpi --no-install-recommends\n"
+
+expect "# "
+send 'sed -i "s/\[XDMCPServer\]/\[XDMCPServer\]\nenabled=true\nport=177/" /etc/lightdm/lightdm.conf\n'
+
+set file [slurp "lib/systemd/system/tigervnc@.service"]
+
+expect "# "
+send "cat << 'EOF' > /lib/systemd/system/tigervnc@.service\n"
+send "$file\n"
+send "EOF\n"
+
+set file [slurp "lib/systemd/system/tigervnc.socket"]
+
+expect "# "
+send "cat << 'EOF' > /lib/systemd/system/tigervnc.socket\n"
+send "$file\n"
+send "EOF\n"
+
+expect "# "
+send "systemctl enable tigervnc.socket\n"
+
 
 ##########
 # FINISH #
