@@ -1,4 +1,4 @@
-$HOSTNAME/code/* {
+vanrpi.local, 192.16.0.1 {
   tls internal
 
   @gadget_host {
@@ -6,8 +6,15 @@ $HOSTNAME/code/* {
   }
 
   handle @gadget_host {
-    uri strip_prefix /code
-    reverse_proxy 127.0.0.1:8080
+    redirect /code /code/
+    handle_path /code/* {
+      reverse_proxy :8080
+    }
+
+    redirect /vnc /vnc/
+    handle_path /vnc/* {
+      reverse_proxy * :7080
+    }
   }
 
   respond "Access denied" 403

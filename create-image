@@ -82,6 +82,22 @@ send "/.config/code-server/config.yaml' << EOF\n"
 send "$file\n"
 send "EOF\n"
 
+###################
+# CONFIGURE NoVNC #
+###################
+expect "# "
+send "sudo apt-get install novnc --no-install-recommends\n"
+
+set file [slurp "lib/systemd/system/novnc@.service"]
+
+expect "# "
+send "sudo bash -c 'cat > /lib/systemd/system/novnc@.service' << EOF\n"
+send "$file\n"
+send "EOF\n"
+
+expect "# "
+send "sudo systemctl enable novnc@$USER.service\n"
+
 #################
 # INSTALL CADDY #
 #################
