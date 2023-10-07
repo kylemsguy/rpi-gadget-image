@@ -37,27 +37,50 @@ send "\n"
 expect ":~$ "
 send "sudo hostname "
 send $env(HOSTNAME)
-"\n"
+send "\n"
 
-####################
-# INSTALL PACKAGES #
-####################
-expect "$ "
+##############################
+# UPDATE PACKAGES REPOSITORY #
+##############################
+expect ":~$ "
+send "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg\n"
+
+expect ":~$ "
+send "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list\n"
+
+expect ":~$ "
 send "sudo apt-get update\n"
 
-expect "$ "
+expect ":~$ "
 # send "sudo apt-get -y upgrade\n"
 
-# expect "$ "
-send "sudo apt-get -y install dnsmasq network-manager bridge-utils debian-keyring debian-archive-keyring apt-transport-https\n"
+# expect ":~$ "
+send "sudo apt-get -y install dnsmasq network-manager bridge-utils debian-keyring debian-archive-keyring apt-transport-https caddy || exit\n"
 
-expect "$ "
+expect {
+  ":~$ " { } # Do nothing
+  "login:" {
+    send_user "[\033[0;31mFAILURE\033[0m] Failed to install the packages.\n"
+    exec docker stop dockerpi
+  }
+}
+
+expect ":~$ "
+send "sudo apt-get install --no-install-recommends -y novnc xserver-xorg raspberrypi-ui-mods lightdm tigervnc-standalone-server xfonts-scalable xfonts-100dpi xfonts-75dpi || exit\n"
+
+expect {
+  ":~$ " { } # Do nothing
+  "login:" {
+    send_user "[\033[0;31mFAILURE\033[0m] Failed to install the packages.\n"
+    exec docker stop dockerpi
+  }
+}
+
 send "sudo apt-get clean\n"
 
 ###########################
 # ACTIVATE NETWORKMANAGER #
 ###########################
-
 expect ":~$ "
 send "sudo systemctl enable --now NetworkManager\n"
 
@@ -93,9 +116,6 @@ send "EOF\n"
 ###################
 # CONFIGURE NoVNC #
 ###################
-expect "# "
-send "sudo apt-get install novnc --no-install-recommends\n"
-
 set file [slurp "lib/systemd/system/novnc@.service"]
 
 expect ":~$ "
@@ -109,17 +129,6 @@ send "sudo systemctl enable novnc@\$USER.service\n"
 #################
 # INSTALL CADDY #
 #################
-expect "$ "
-send "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg\n"
-
-expect "$ "
-send "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list\n"
-
-expect "$ "
-send "sudo apt-get update\n"
-
-expect "$ "
-send "sudo apt-get install caddy\n"
 
 set file [slurp "etc/caddy/Caddyfile"]
 expect ":~$ "
@@ -227,13 +236,10 @@ expect ":~# "
 send "raspi-config nonint do_vnc 0\n"
 
 #############################
-# CONFIGURE TightVNC Server #
+# CONFIGURE TigerVNC Server #
 #############################
-expect "# "
-send "apt-get install tigervnc-standalone-server xfonts-scalable xfonts-100dpi xfonts-75dpi --no-install-recommends\n"
-
-expect "# "
-send 'sed -i "s/\[XDMCPServer\]/\[XDMCPServer\]\nenabled=true\nport=177/" /etc/lightdm/lightdm.conf\n'
+expect ":~# "
+send "sed -i \"s/\\\[XDMCPServer\\\]/\\\[XDMCPServer\\\]\\nenabled=true\\nport=177/\" /etc/lightdm/lightdm.conf\n"
 
 set file [slurp "lib/systemd/system/tigervnc@.service"]
 
