@@ -58,7 +58,7 @@ send "sudo apt-get clean\n"
 # ACTIVATE NETWORKMANAGER #
 ###########################
 
-expect "$ "
+expect ":~$ "
 send "sudo systemctl enable --now NetworkManager\n"
 
 
@@ -67,23 +67,23 @@ send "sudo systemctl enable --now NetworkManager\n"
 #################
 
 # install coder
-expect "$ "
+expect ":~$ "
 send "sudo curl -fsSL https://raw.githubusercontent.com/coder/code-server/main/install.sh | sh\n"
 
-expect "$ "
+expect ":~$ "
 send "sudo systemctl enable code-server@\$USER\n"
 
-expect "$ "
+expect ":~$ "
 send "sudo sed -i '/^\\\[Service\\\]/a AmbientCapabilities=CAP_NET_BIND_SERVICE' /lib/systemd/system/code-server@.service\n"
 
 
 # configure coder
 send "sudo mkdir -p ~/.config/code-server\n"
 
-expect "$ "
+expect ":~$ "
 set file [slurp "userhome/.config/code-server/config.yaml"]
 
-expect "$ "
+expect ":~$ "
 send "sudo bash -c 'cat > /home/"
 send $env(USERNAME)
 send "/.config/code-server/config.yaml' << EOF\n"
@@ -98,13 +98,13 @@ send "sudo apt-get install novnc --no-install-recommends\n"
 
 set file [slurp "lib/systemd/system/novnc@.service"]
 
-expect "# "
+expect ":~$ "
 send "sudo bash -c 'cat > /lib/systemd/system/novnc@.service' << EOF\n"
 send "$file\n"
 send "EOF\n"
 
-expect "# "
-send "sudo systemctl enable novnc@$USER.service\n"
+expect ":~$ "
+send "sudo systemctl enable novnc@\$USER.service\n"
 
 #################
 # INSTALL CADDY #
@@ -122,37 +122,37 @@ expect "$ "
 send "sudo apt-get install caddy\n"
 
 set file [slurp "etc/caddy/Caddyfile"]
-expect "$ "
+expect ":~$ "
 send "sudo bash -c 'cat > /etc/caddy/Caddyfile' << EOF\n"
 send "$file\n"
 send "EOF\n"
 
-expect "$ "
+expect ":~$ "
 send "sudo systemctl reload caddy\n"
 
 ###################
 # SWITCH TO ROOT  #
 ###################
-expect "$ "
+expect ":~$ "
 send "sudo su -\n"
 
 ########################
 # SETUP NETWORK BRIDGE #
 ########################
-expect "# "
+expect ":~# "
 send "sudo brctl addbr br0\n"
 
 ########################
 # CONFIGURE DNS SERVER #
 ########################
 set file [slurp "etc/dnsmasq.d/usb0"]
-expect "# "
+expect ":~# "
 send "cat << 'EOF' > /etc/dnsmasq.d/usb0\n"
 send "$file\n"
 send "EOF\n"
 
 set file [slurp "etc/network/interfaces.d/usb0"]
-expect "# "
+expect ":~# "
 send "cat << 'EOF' > /etc/network/interfaces.d/usb0\n"
 send "$file\n"
 send "EOF\n"
@@ -162,32 +162,32 @@ send "EOF\n"
 # CONFIGURE USB GADGET #
 ########################
 set file [slurp "usr/local/sbin/multigadget"]
-expect "# "
+expect ":~# "
 send "cat << 'EOF' > /usr/local/sbin/multigadget\n"
 send "$file\n"
 send "EOF\n"
-expect "# "
+expect ":~# "
 send "chmod +x /usr/local/sbin/multigadget\n"
 
 set file [slurp "lib/systemd/system/multigadget.service"]
-expect "# "
+expect ":~# "
 send "cat << 'EOF' > /lib/systemd/system/multigadget.service\n"
 send "$file\n"
 send "EOF\n"
-expect "# "
+expect ":~# "
 send "systemctl enable multigadget.service\n"
 
 
 ####################
 # CONFIGURE KERNEL #
 ####################
-expect "# "
+expect ":~# "
 send "echo dtoverlay=dwc2 >> /boot/config.txt\n"
 
-expect "# "
+expect ":~# "
 send "touch /boot/ssh\n"
 
-expect "# "
+expect ":~# "
 send "echo dwc2 >> /etc/modules\n"
 send "echo libcomposite >> /etc/modules\n"
 
@@ -196,19 +196,19 @@ send "echo libcomposite >> /etc/modules\n"
 ##################
 # CONFIGURE DHCP #
 ##################
-expect "# "
+expect ":~# "
 send "echo denyinterfaces usb0 br0 >> /etc/dhcpcd.conf\n"
 
 ##########################
 # ENABLE NETWORK MANAGER #
 ##########################
-expect "# "
+expect ":~# "
 send "raspi-config nonint do_netconf 2\n"
 
 ################
 # SET HOSTNAME #
 ################
-expect "# "
+expect ":~# "
 send "raspi-config nonint do_hostname "
 send $env(HOSTNAME)
 send "\n"
@@ -216,14 +216,14 @@ send "\n"
 ##############
 # ENABLE SSH #
 ##############
-expect "# "
+expect ":~# "
 send "raspi-config nonint do_ssh 0\n"
 expect "# "
 
 ############################
 # CONFIGURE RealVNC Server #
 ############################
-expect "# "
+expect ":~# "
 send "raspi-config nonint do_vnc 0\n"
 
 #############################
@@ -237,19 +237,19 @@ send 'sed -i "s/\[XDMCPServer\]/\[XDMCPServer\]\nenabled=true\nport=177/" /etc/l
 
 set file [slurp "lib/systemd/system/tigervnc@.service"]
 
-expect "# "
+expect ":~# "
 send "cat << 'EOF' > /lib/systemd/system/tigervnc@.service\n"
 send "$file\n"
 send "EOF\n"
 
 set file [slurp "lib/systemd/system/tigervnc.socket"]
 
-expect "# "
+expect ":~# "
 send "cat << 'EOF' > /lib/systemd/system/tigervnc.socket\n"
 send "$file\n"
 send "EOF\n"
 
-expect "# "
+expect ":~# "
 send "systemctl enable tigervnc.socket\n"
 
 
