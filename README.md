@@ -3,7 +3,9 @@
 A script to add USB Ethernet Gadget configuration to a standard Raspbian Lite SD Card image. 
 This should work with Raspberry Pi Zero, Zero W and 4.
 
-Currently only tested on Linux and with Docker Desktop + WSL on Windows 10, but should also run on OSx 
+Currently only tested on Linux, but should also run on OSx and with Docker Desktop + WSL on Windows 10
+
+Based on the great work by :
 
 
 ## Requirements
