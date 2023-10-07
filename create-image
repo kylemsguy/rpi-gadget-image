@@ -235,7 +235,12 @@ send "sed -i 's/#allow-interfaces=eth0/allow-interfaces=usb0/' /etc/avahi/avahi-
 ##############
 expect ":~# "
 send "raspi-config nonint do_ssh 0\n"
-expect "# "
+expect ":~# "
+
+#######################
+# CONFIGURE AUTOLOGIN #
+#######################
+send "sudo raspi-config nonint do_boot_behaviour B4\n"
 
 ############################
 # CONFIGURE RealVNC Server #
