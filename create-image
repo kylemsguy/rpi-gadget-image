@@ -34,8 +34,8 @@ send "\n"
 #############################
 # TEMPORARY HOSTNAME CHANGE #
 #############################
-expect "$ "
-send "sudo hostname"
+expect ":~$ "
+send "sudo hostname "
 send $env(HOSTNAME)
 "\n"
 
