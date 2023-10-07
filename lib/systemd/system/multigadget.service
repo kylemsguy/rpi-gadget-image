@@ -2,11 +2,11 @@
 Description=Multigadget
 Before=network-pre.target
 Wants=network-pre.target
- 
+
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/local/sbin/multigadget
- 
+
 [Install]
 WantedBy=sysinit.target
