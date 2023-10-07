@@ -7,6 +7,12 @@ Currently only tested on Linux, but should also run on OSx and with Docker Deskt
 
 Based on the great work by : Ben Hardill - https://github.com/hardillb/rpi-gadget-image-creator
 
+## Features
+ - USB Power + Ethernet(DNS and DHCP powered) + Serial
+ - VSCode via the web(Accessible only on the USB Ethernet interface) : ```${HOSTNAME}```.pi/vscode/
+ - Web-based VNC(Accessible only on the USB Ethernet interface) : ```${HOSTNAME}```.pi/vnc/
+ - PiXEL Desktop Minimal
+
 
 ## Requirements(The script will try to install these for you using APT)
 
@@ -24,8 +30,7 @@ Clone the repo
 git clone https://github.com/hardillb/rpi-gadget-image-creator.git
 ```
 
-## Running
-
+## Running(Build-time: ~50 minutes)
 ```
 ./setup.sh
 ```
