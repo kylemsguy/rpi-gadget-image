@@ -38,7 +38,3 @@ git clone https://github.com/hardillb/rpi-gadget-image-creator.git
 
 Once complete you can write the image file to a SD Card with any of the usual tools e.g. `dd` or `balena-etch`.
 You can find instructions on the Raspberry Pi website [here](https://www.raspberrypi.org/documentation/installation/installing-images/README.md)
-
-## TODO
-
-Look at repackaging everything into an extension to DockerPi so the whole thing runs in the container.
