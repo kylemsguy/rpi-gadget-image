@@ -222,6 +222,14 @@ send "raspi-config nonint do_hostname "
 send $env(HOSTNAME)
 send "\n"
 
+###################
+# CONFIGURE AVAHI #
+###################
+expect ":~# "
+send "sed -i 's/#domain-name=local/domain-name=pi/' /etc/avahi/avahi-daemon.conf\n"
+expect ":~# "
+send "sed -i 's/#allow-interfaces=eth0/allow-interfaces=usb0/' /etc/avahi/avahi-daemon.conf\n"
+
 ##############
 # ENABLE SSH #
 ##############
