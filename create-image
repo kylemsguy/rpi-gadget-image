@@ -59,20 +59,31 @@ send "sudo apt-get -y install dnsmasq network-manager bridge-utils debian-keyrin
 
 expect {
   ":~$ " { } # Do nothing
+  "E:" {
+    send_user "[\033[0;31mFAILURE\033[0m] Failed to a package.\n"
+    exec docker stop dockerpi
+    exit 1
+  }
   "login:" {
     send_user "[\033[0;31mFAILURE\033[0m] Failed to install the packages.\n"
     exec docker stop dockerpi
+    exit 1
   }
 }
 
-expect ":~$ "
 send "sudo apt-get install --no-install-recommends -y novnc xserver-xorg raspberrypi-ui-mods lightdm tigervnc-standalone-server xfonts-scalable xfonts-100dpi xfonts-75dpi || exit\n"
 
 expect {
   ":~$ " { } # Do nothing
+  "E:" {
+    send_user "[\033[0;31mFAILURE\033[0m] Failed to a package.\n"
+    exec docker stop dockerpi
+    exit 1
+  }
   "login:" {
     send_user "[\033[0;31mFAILURE\033[0m] Failed to install the packages.\n"
     exec docker stop dockerpi
+    exit 1
   }
 }
 
