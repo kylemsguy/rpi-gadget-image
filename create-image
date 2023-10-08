@@ -40,7 +40,7 @@ send $env(HOSTNAME)
 send "\n"
 
 send "exit\n"
-expect "vaneixus login: "
+expect "$env(HOSTNAME) login: "
 
 send $env(USERNAME)
 send "\n"
