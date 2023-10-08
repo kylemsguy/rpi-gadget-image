@@ -1,4 +1,4 @@
-name: Deploy Image to Docker Installation
+name: Create Artifact
 
 on:
   schedule:
