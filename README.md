@@ -24,7 +24,7 @@ Based on the great work by : Ben Hardill - https://github.com/hardillb/rpi-gadge
 
 ## PI Image
 Username: pi
-Password: pi
+Password: raspberry
 >Note: please use the image configuration tool in the RaspberryPi Imager to configure the system.
 
 
