@@ -154,6 +154,17 @@ send "EOF\n"
 expect ":~$ "
 send "sudo systemctl enable novnc@\$USER.service\n"
 
+set file [slurp "usr/share/novnc/index.html"]
+expect ":~$ "
+send "sudo bash -c 'cat > /usr/share/novnc/index.html' << EOF\n"
+send "$file\n"
+send "EOF\n"
+
+expect ":~$ "
+send "sudo rm /usr/share/novnc/vnc_lite.html\n"
+expect ":~$ "
+send "sudo rm /usr/share/novnc/vnc.html\n"
+
 ###################
 # CONFIGURE CADDY #
 ###################
