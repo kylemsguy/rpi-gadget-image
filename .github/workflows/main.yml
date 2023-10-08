@@ -5,7 +5,7 @@ on:
     - cron: 0 0 */14 * *
   push:
     branches:
-      - main
+      - master
     paths:
       - "**"
   pull_request:
@@ -20,4 +20,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run Script
-        run: ./setup.sh
+        run: sudo ./setup.sh
