@@ -1,0 +1,23 @@
+name: Deploy Image to Docker Installation
+
+on:
+  schedule:
+    - cron: 0 0 */14 * *
+  push:
+    branches:
+      - main
+    paths:
+      - "**"
+  pull_request:
+    paths:
+      - "**"
+  workflow_dispatch:
+
+jobs:
+  deploy_template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run Script
+        run: setup.sh
