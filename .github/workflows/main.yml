@@ -19,5 +19,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Run Script
         run: sudo ./setup.sh raspberrypi pi raspberry
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./*.img
+          if-no-files-found: error
