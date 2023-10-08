@@ -39,6 +39,15 @@ send "sudo hostname "
 send $env(HOSTNAME)
 send "\n"
 
+send "exit\n"
+expect "vaneixus login: "
+
+send $env(USERNAME)
+send "\n"
+expect "Password: "
+send $env(PASSWORD)
+send "\n"
+
 ##############################
 # UPDATE PACKAGES REPOSITORY #
 ##############################
@@ -49,13 +58,21 @@ expect ":~$ "
 send "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list\n"
 
 expect ":~$ "
+send "sudo sed -i 's/http:\/\/archive.raspberrypi.org\/debian/http:\/\/mirrordirector.raspbian.org\/raspbian\//' /etc/apt/sources.list.d/raspi.list\n"
+
+expect ":~$ "
 send "sudo apt-get update\n"
+
+####################
+# INSTALL PACKAGES #
+####################
 
 expect ":~$ "
 # send "sudo apt-get -y upgrade\n"
 
 # expect ":~$ "
-send "sudo apt-get -y install dnsmasq network-manager bridge-utils debian-keyring debian-archive-keyring apt-transport-https caddy || exit\n"
+send "sudo apt-get -y install dnsmasq network-manager bridge-utils debian-keyring debian-archive-keyring apt-transport-https caddy realvnc-vnc-server || exit\n"
+
 
 expect {
   ":~$ " { } # Do nothing
@@ -74,7 +91,7 @@ expect {
 send "sudo apt-get install --no-install-recommends -y novnc xserver-xorg raspberrypi-ui-mods lightdm tigervnc-standalone-server xfonts-scalable xfonts-100dpi xfonts-75dpi || exit\n"
 
 expect {
-  ":~$ " { } # Do nothing
+  ":~$ " { }
   "E:" {
     send_user "[\033[0;31mFAILURE\033[0m] Failed to a package.\n"
     exec docker stop dockerpi
@@ -137,9 +154,9 @@ send "EOF\n"
 expect ":~$ "
 send "sudo systemctl enable novnc@\$USER.service\n"
 
-#################
-# INSTALL CADDY #
-#################
+###################
+# CONFIGURE CADDY #
+###################
 
 set file [slurp "etc/caddy/Caddyfile"]
 expect ":~$ "
