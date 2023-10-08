@@ -265,7 +265,7 @@ send "\n"
 # CONFIGURE AVAHI #
 ###################
 expect ":~# "
-send "sed -i 's/#allow-interfaces=eth0/allow-interfaces=usb0/' /etc/avahi/avahi-daemon.conf\n"
+send "sed -i 's/#allow-interfaces=eth0/allow-interfaces=br0/' /etc/avahi/avahi-daemon.conf\n"
 
 ##############
 # ENABLE SSH #
