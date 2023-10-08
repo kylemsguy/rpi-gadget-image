@@ -22,15 +22,20 @@ Based on the great work by : Ben Hardill - https://github.com/hardillb/rpi-gadge
  - qemu-utils
  - parted
 
-## Install
+## PI Image
+Username: pi
+Password: pi
+>Note: please use the image configuration tool in the RaspberryPi Imager to configure the system.
 
+
+
+## Running Script(Build-time: ~50 minutes)
 Clone the repo
 
 ```
 git clone https://github.com/hardillb/rpi-gadget-image-creator.git
 ```
 
-## Running(Build-time: ~50 minutes)
 ```
 ./setup.sh
 ```
