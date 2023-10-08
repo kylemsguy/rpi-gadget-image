@@ -60,12 +60,23 @@ OFFSET=$(fdisk -l "$RASPIAN_OS_FILE" | awk '/^[^ ]*1/{ print $2*512 }')
 mkdir boot
 sudo mount -o loop,offset="$OFFSET" "$RASPIAN_OS_FILE" boot
 
-read -rp "Please enter hostname: " HOSTNAME
-echo
-read -rp "Please enter username: " USERNAME
-echo
-read -rsp "Please enter password for $USERNAME user: " PASSWORD
-echo
+# check for if the HOSTNAME, USERNAME, PASSWORD have been supplied in $#
+if [ $# -eq 3 ]; then
+  HOSTNAME=$1
+  USERNAME=$2
+  PASSWORD=$3
+  echo "Using supplied hostname, username and password"
+else
+  echo "Please enter hostname, username and password"
+
+  read -rp "Please enter hostname: " HOSTNAME
+  echo
+  read -rp "Please enter username: " USERNAME
+  echo
+  read -rsp "Please enter password for $USERNAME user: " PASSWORD
+  echo
+fi
+
 PASS=$(echo "$PASSWORD" |  openssl passwd -6 -stdin)
 echo "$USERNAME:$PASS" > userconf.txt
 
