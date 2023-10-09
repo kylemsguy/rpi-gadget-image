@@ -274,6 +274,11 @@ expect ":~# "
 send "raspi-config nonint do_ssh 0\n"
 expect ":~# "
 
+#######################
+# CONFIGURE AUTOLOGIN #
+#######################
+send "sudo raspi-config nonint do_boot_behaviour B4\n"
+
 ############################
 # CONFIGURE RealVNC Server #
 ############################
