@@ -52,7 +52,7 @@ if [ ! -f "$RASPIAN_OS_FILE" ]; then
 fi
 
 if [ ! -x "$(command -v qemu-img)" ]; then
-  echo "Could not find qemu-img. Installing qemu-img..."
+  echo "Could not find qemu-img. Installing qemu-utils..."
   apt-get install -y qemu-utils
 fi
 
@@ -62,7 +62,7 @@ if [ ! -x "$(command -v parted)" ]; then
 fi
 
 CURRENT_SIZE=$(qemu-img info "$RASPIAN_OS_FILE" | grep 'virtual size' | awk '{print $3}')
-IMG_SIZE_POW_2=$(echo "x=l($CURRENT_SIZE)/l(2); scale=0; 2^((x+1.99)/1)" | bc -l;)
+IMG_SIZE_POW_2=$(echo "x=l($CURRENT_SIZE)/l(2); scale=0; 2^((x+0.99)/1)" | bc -l;)
 
 echo "Resizing $RASPIAN_OS_FILE to $IMG_SIZE_POW_2 GB."
 qemu-img resize "$RASPIAN_OS_FILE" "${IMG_SIZE_POW_2}G"
@@ -74,23 +74,6 @@ echo "Mounting $RASPIAN_OS_FILE"
 OFFSET=$(fdisk -l "$RASPIAN_OS_FILE" | awk '/^[^ ]*1/{ print $2*512 }')
 mkdir boot
 sudo mount -o loop,offset="$OFFSET" "$RASPIAN_OS_FILE" boot
-
-# check for if the HOSTNAME, USERNAME, PASSWORD have been supplied in $#
-if [ $# -eq 3 ]; then
-  HOSTNAME=$1
-  USERNAME=$2
-  PASSWORD=$3
-  echo "Using supplied hostname, username and password"
-else
-  echo "Please enter hostname, username and password"
-
-  read -rp "Please enter hostname: " HOSTNAME
-  echo
-  read -rp "Please enter username: " USERNAME
-  echo
-  read -rsp "Please enter password for $USERNAME user: " PASSWORD
-  echo
-fi
 
 PASS=$(echo "$PASSWORD" |  openssl passwd -6 -stdin)
 echo "$USERNAME:$PASS" > userconf.txt
