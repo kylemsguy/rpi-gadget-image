@@ -88,7 +88,7 @@ expect {
   }
 }
 
-send "sudo apt-get install --no-install-recommends -y xserver-xorg raspberrypi-ui-mods lightdm tigervnc-standalone-server realvnc-vnc-server xfonts-scalable xfonts-100dpi xfonts-75dpi novnc || exit\n"
+send "sudo apt-get install --no-install-recommends -y tigervnc-standalone-server xfonts-scalable xfonts-100dpi xfonts-75dpi novnc || exit\n"
 
 expect {
   ":~$ " { }
@@ -273,11 +273,6 @@ send "sed -i 's/#allow-interfaces=eth0/allow-interfaces=br0/' /etc/avahi/avahi-d
 expect ":~# "
 send "raspi-config nonint do_ssh 0\n"
 expect ":~# "
-
-#######################
-# CONFIGURE AUTOLOGIN #
-#######################
-usesend "sudo raspi-config nonint do_boot_behaviour B3\n"
 
 ############################
 # CONFIGURE RealVNC Server #
