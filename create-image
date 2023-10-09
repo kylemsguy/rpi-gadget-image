@@ -122,7 +122,7 @@ expect ":~$ "
 send "sudo curl -fsSL https://raw.githubusercontent.com/coder/code-server/main/install.sh | sh\n"
 
 expect ":~$ "
-send "sudo systemctl enable code-server@\$USER\n"
+send "sudo systemctl enable code-server@1000\n"
 
 expect ":~$ "
 send "sudo sed -i '/^\\\[Service\\\]/a AmbientCapabilities=CAP_NET_BIND_SERVICE' /lib/systemd/system/code-server@.service\n"
@@ -144,15 +144,12 @@ send "EOF\n"
 ###################
 # CONFIGURE NoVNC #
 ###################
-set file [slurp "lib/systemd/system/novnc@.service"]
+set file [slurp "lib/systemd/system/novnc.service"]
 
 expect ":~$ "
-send "sudo bash -c 'cat > /lib/systemd/system/novnc@.service' << EOF\n"
+send "sudo bash -c 'cat > /lib/systemd/system/novnc.service' << EOF\n"
 send "$file\n"
 send "EOF\n"
-
-expect ":~$ "
-send "sudo systemctl enable novnc@\$USER.service\n"
 
 set file [slurp "usr/share/novnc/index.html"]
 expect ":~$ "
@@ -160,13 +157,16 @@ send "sudo bash -c 'cat > /usr/share/novnc/index.html' << EOF\n"
 send "$file\n"
 send "EOF\n"
 
-send "sudo ln -s /usr/share/novnc/index.html /usr/share/novnc/vnc.html\n"
-
-
 expect ":~$ "
 send "sudo rm /usr/share/novnc/vnc_lite.html\n"
 expect ":~$ "
 send "sudo rm /usr/share/novnc/vnc.html\n"
+
+expect ":~$ "
+send "sudo ln -s /usr/share/novnc/index.html /usr/share/novnc/vnc.html\n"
+
+expect ":~$ "
+send "sudo systemctl enable novnc.service\n"
 
 ###################
 # CONFIGURE CADDY #
