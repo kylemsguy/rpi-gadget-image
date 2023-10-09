@@ -7,6 +7,7 @@
 USB_VERSION="0x0200" # USB2
 
 DEVICE_CLASS="0xEF" # Miscellaneous Device Class
+DEVICE_CLASS_RESET="0x00" # Reset Device Class
 DEVICE_SUBCLASS="0x02" # Common Class
 DEVICE_PROTOCOL="0x01" # Interface Association Descriptor
 
@@ -94,6 +95,11 @@ if [ "$ENABLE_NETWORKING" = true ]; then
   echo $MS_SUB_COMPATIBLE_ID  > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
 
   ln -s functions/rndis.usb0 configs/c.1/
+
+  # Allow Windows to install RNDIS drivers automatically.
+  ls /sys/class/udc > UDC
+  sleep 5
+  echo "" > UDC
 fi
 
 # Serial
@@ -109,4 +115,7 @@ fi
 #################
 # End functions #
 #################
+# Force Windows to re-read the descriptors.
+echo $DEVICE_CLASS_RESET > bDeviceClass
+# Power on the gadget.
 ls /sys/class/udc > UDC
