@@ -4,6 +4,21 @@ if [[ $(id -u) -ne 0 ]]; then
     echo "Root privileges required."
     exit 1
 fi
+# print welcome message
+echo "This script will create a Raspberry Pi gadget image with the following settings:"
+if [ $# -eq 3 ]; then
+  HOSTNAME=$1
+  USERNAME=$2
+  PASSWORD=$3
+  echo "Using supplied hostname, username and password"
+else
+  read -rp "Please enter hostname: " HOSTNAME
+  echo
+  read -rp "Please enter username: " USERNAME
+  echo
+  read -rsp "Please enter password for $USERNAME user: " PASSWORD
+  echo
+fi
 
 if [ ! -x "$(command -v curl)" ]; then
   echo "Could not find curl. Installing curl..."
