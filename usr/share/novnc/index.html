@@ -73,16 +73,13 @@
     <!-- actual script modules -->
     <script type="module" crossorigin="anonymous">
         // Load supporting scripts
-        import * as WebUtil from './app/webutil.js';
         import RFB from './core/rfb.js';
 
-        var rfb;
-        var desktopName;
+        let rfb;
 
-        WebUtil.init_logging('warn');
         document.title = "VNC - " + window.location.hostname;
-        var host = window.location.hostname;
-        var port = window.location.port;
+        const host = window.location.hostname;
+        let port = window.location.port;
 
         // if port == 80 (or 443) then it won't be present and should be
         // set manually
@@ -95,13 +92,12 @@
             }
         }
 
-        var password = '';
-        var path = "/vnc/";
-        var token = null;
+        const password = '';
+        const path = "/vnc/";
 
 
         (function() {
-            var url;
+            let url;
 
             if (window.location.protocol === "https:") {
                 url = 'wss';
