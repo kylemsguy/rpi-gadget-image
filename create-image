@@ -277,7 +277,7 @@ expect ":~# "
 #######################
 # CONFIGURE AUTOLOGIN #
 #######################
-send "sudo raspi-config nonint do_boot_behaviour B4\n"
+usesend "sudo raspi-config nonint do_boot_behaviour B3\n"
 
 ############################
 # CONFIGURE RealVNC Server #
