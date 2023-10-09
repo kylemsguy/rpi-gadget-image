@@ -9,8 +9,8 @@ Based on the great work by : Ben Hardill - https://github.com/hardillb/rpi-gadge
 
 ## Features
  - USB Power + Ethernet(DNS and DHCP powered) + Serial
- - VSCode via the web(Accessible only on the USB Ethernet interface) : ```${HOSTNAME}```.pi/vscode/
- - Web-based VNC(Accessible only on the USB Ethernet interface) : ```${HOSTNAME}```.pi/vnc/
+ - VSCode via the web(Accessible only on the USB Ethernet interface) : ```${HOSTNAME}```.local/code/
+ - Web-based VNC(Accessible only on the USB Ethernet interface) : ```${HOSTNAME}```.local/vnc/
  - PiXEL Desktop Minimal
 
 
