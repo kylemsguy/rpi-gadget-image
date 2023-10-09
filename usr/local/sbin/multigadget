@@ -70,7 +70,7 @@ mkdir -p configs/c.1/strings/$LANGUAGE
 echo $CONFIG_1  > configs/c.1/strings/$LANGUAGE/configuration
 echo $MAX_POWER > configs/c.1/MaxPower
 
-ln -s configs.c1 os_desc
+ln -s configs/c.1 os_desc
 
 
 # Microsoft OS Descriptors
