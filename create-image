@@ -160,6 +160,9 @@ send "sudo bash -c 'cat > /usr/share/novnc/index.html' << EOF\n"
 send "$file\n"
 send "EOF\n"
 
+send "sudo ln -s /usr/share/novnc/index.html /usr/share/novnc/vnc.html\n"
+
+
 expect ":~$ "
 send "sudo rm /usr/share/novnc/vnc_lite.html\n"
 expect ":~$ "
