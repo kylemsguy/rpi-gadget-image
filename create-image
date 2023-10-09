@@ -41,9 +41,6 @@ expect ":~$ "
 send "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list\n"
 
 expect ":~$ "
-send "sudo sed -i 's/http:\/\/archive.raspberrypi.org\/debian/http:\/\/mirrordirector.raspbian.org\/raspbian\//' /etc/apt/sources.list.d/raspi.list\n"
-
-expect ":~$ "
 send "sudo apt-get update\n"
 
 ####################
