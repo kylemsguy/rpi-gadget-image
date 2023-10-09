@@ -31,23 +31,6 @@ expect "Password: "
 send $env(PASSWORD)
 send "\n"
 
-#############################
-# TEMPORARY HOSTNAME CHANGE #
-#############################
-expect ":~$ "
-send "sudo hostname "
-send $env(HOSTNAME)
-send "\n"
-
-send "exit\n"
-expect "$env(HOSTNAME) login: "
-
-send $env(USERNAME)
-send "\n"
-expect "Password: "
-send $env(PASSWORD)
-send "\n"
-
 ##############################
 # UPDATE PACKAGES REPOSITORY #
 ##############################
