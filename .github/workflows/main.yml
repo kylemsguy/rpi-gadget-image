@@ -26,6 +26,6 @@ jobs:
       - uses: actions/upload-artifact@v3
         name: Upload Generated Image
         with:
-          name: raspios.img
-          path: ./raspios.img
+          name: raspios.img.xz
+          path: ./raspios.img.xz
           if-no-files-found: error

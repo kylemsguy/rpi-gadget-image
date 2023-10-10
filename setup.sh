@@ -104,4 +104,4 @@ fi
 
 ./create-image "$RASPIOS_OS_FILE"
 ./pishrink -aZ "$RASPIOS_OS_FILE"
-mv "$RASPIOS_OS_FILE.img" "raspios.img"
+mv "$RASPIOS_OS_FILE.xz" "raspios.img.xz"
