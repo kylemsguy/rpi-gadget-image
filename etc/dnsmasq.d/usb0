@@ -2,6 +2,6 @@ dhcp-authoritative
 dhcp-rapid-commit
 no-ping
 interface=br0
-dhcp-range=192.16.0.2,192.16.0.2,255.255.255.252,1h
-dhcp-option=3,192.16.0.1
+dhcp-range=192.168.16.2,192.168.16.2,255.255.255.252,1h
+dhcp-option=3,192.168.16.1
 leasefile-ro
