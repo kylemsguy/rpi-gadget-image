@@ -6,18 +6,23 @@ if [[ $(id -u) -ne 0 ]]; then
 fi
 # print welcome message
 echo "This script will create a Raspberry Pi gadget image with the following settings:"
+
+BACKUP=true
 if [ $# -eq 3 ]; then
   HOSTNAME=$1
   USERNAME=$2
   PASSWORD=$3
   echo "Using supplied hostname, username and password"
+elif [ $# -eq 4 ]; then
+  HOSTNAME=$1
+  USERNAME=$2
+  PASSWORD=$3
+  BACKUP=false
+  echo "Using supplied hostname, username and password, no backup"
 else
   read -rp "Please enter hostname: " HOSTNAME
-  echo
   read -rp "Please enter username: " USERNAME
-  echo
   read -rsp "Please enter password for $USERNAME user: " PASSWORD
-  echo
 fi
 
 if [ ! -x "$(command -v curl)" ]; then
@@ -44,7 +49,10 @@ if [ ! -f "$RASPIAN_OS_FILE" ]; then
     curl -s "https://downloads.raspberrypi.org/raspios_full_arm64/images/raspios_full_arm64-$RASPIAN_OS_RELEASE_DATE/$RASPIAN_OS_FILE.xz" -o "$RASPIAN_OS_FILE.xz"
     echo "Unpacking $RASPIAN_OS_FILE.xz"
     xz -d "$RASPIAN_OS_FILE.xz"
-    cp "$RASPIAN_OS_FILE" "$RASPIAN_OS_FILE.bak"
+
+    if  $BACKUP; then
+      cp "$RASPIAN_OS_FILE" "$RASPIAN_OS_FILE.bak"
+    fi
   else
     echo "Using backup of Raspian OS image."
     cp "$RASPIAN_OS_FILE.bak" "$RASPIAN_OS_FILE"
