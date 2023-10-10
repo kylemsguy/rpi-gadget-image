@@ -31,31 +31,31 @@ if [ ! -x "$(command -v curl)" ]; then
 fi
 
 
-RASPIAN_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
-RASPIAN_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
+RASPIOS_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
+RASPIOS_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
 
-if [[ -z "$RASPIAN_OS_VERSION" || -z "$RASPIAN_OS_RELEASE_DATE" ]]; then
-  echo "Could not determine latest Raspian OS version."
+if [[ -z "$RASPIOS_OS_VERSION" || -z "$RASPIOS_OS_RELEASE_DATE" ]]; then
+  echo "Could not determine latest Raspios OS version."
   exit 1
 fi
 
-RASPIAN_OS_FILE="$RASPIAN_OS_RELEASE_DATE-raspios-$RASPIAN_OS_VERSION-arm64-full.img"
+RASPIOS_OS_FILE="$RASPIOS_OS_RELEASE_DATE-raspios-$RASPIOS_OS_VERSION-arm64-full.img"
 
-if [ ! -f "$RASPIAN_OS_FILE" ]; then
-  echo "Could not find latest Raspian OS image locally."
-  if [ ! -f "$RASPIAN_OS_FILE.bak" ]; then
-    echo "Could not find backup of latest Raspian OS image."
-    echo "Downloading $RASPIAN_OS_FILE.xz from https://downloads.raspberrypi.org/."
-    curl -s "https://downloads.raspberrypi.org/raspios_full_arm64/images/raspios_full_arm64-$RASPIAN_OS_RELEASE_DATE/$RASPIAN_OS_FILE.xz" -o "$RASPIAN_OS_FILE.xz"
-    echo "Unpacking $RASPIAN_OS_FILE.xz"
-    xz -d "$RASPIAN_OS_FILE.xz"
+if [ ! -f "$RASPIOS_OS_FILE" ]; then
+  echo "Could not find latest Raspios OS image locally."
+  if [ ! -f "$RASPIOS_OS_FILE.bak" ]; then
+    echo "Could not find backup of latest Raspios OS image."
+    echo "Downloading $RASPIOS_OS_FILE.xz from https://downloads.raspberrypi.org/."
+    curl -s "https://downloads.raspberrypi.org/raspios_full_arm64/images/raspios_full_arm64-$RASPIOS_OS_RELEASE_DATE/$RASPIOS_OS_FILE.xz" -o "$RASPIOS_OS_FILE.xz"
+    echo "Unpacking $RASPIOS_OS_FILE.xz"
+    xz -d "$RASPIOS_OS_FILE.xz"
 
     if  $BACKUP; then
-      cp "$RASPIAN_OS_FILE" "$RASPIAN_OS_FILE.bak"
+      cp "$RASPIOS_OS_FILE" "$RASPIOS_OS_FILE.bak"
     fi
   else
-    echo "Using backup of Raspian OS image."
-    cp "$RASPIAN_OS_FILE.bak" "$RASPIAN_OS_FILE"
+    echo "Using backup of Raspios OS image."
+    cp "$RASPIOS_OS_FILE.bak" "$RASPIOS_OS_FILE"
   fi
 fi
 
@@ -69,19 +69,19 @@ if [ ! -x "$(command -v parted)" ]; then
   apt-get install -y parted
 fi
 
-CURRENT_SIZE=$(qemu-img info "$RASPIAN_OS_FILE" | grep 'virtual size' | awk '{print $3}')
+CURRENT_SIZE=$(qemu-img info "$RASPIOS_OS_FILE" | grep 'virtual size' | awk '{print $3}')
 IMG_SIZE_POW_2=$(echo "x=l($CURRENT_SIZE)/l(2); scale=0; 2^((x+0.99)/1)" | bc -l;)
 
-echo "Resizing $RASPIAN_OS_FILE to $IMG_SIZE_POW_2 GB."
-qemu-img resize "$RASPIAN_OS_FILE" "${IMG_SIZE_POW_2}G"
+echo "Resizing $RASPIOS_OS_FILE to $IMG_SIZE_POW_2 GB."
+qemu-img resize "$RASPIOS_OS_FILE" "${IMG_SIZE_POW_2}G"
 
 echo "Resizing root partition to fill new space."
-parted -s "$RASPIAN_OS_FILE" resizepart 2 100%
+parted -s "$RASPIOS_OS_FILE" resizepart 2 100%
 
-echo "Mounting $RASPIAN_OS_FILE"
-OFFSET=$(fdisk -l "$RASPIAN_OS_FILE" | awk '/^[^ ]*1/{ print $2*512 }')
+echo "Mounting $RASPIOS_OS_FILE"
+OFFSET=$(fdisk -l "$RASPIOS_OS_FILE" | awk '/^[^ ]*1/{ print $2*512 }')
 mkdir boot
-sudo mount -o loop,offset="$OFFSET" "$RASPIAN_OS_FILE" boot
+sudo mount -o loop,offset="$OFFSET" "$RASPIOS_OS_FILE" boot
 
 PASS=$(echo "$PASSWORD" |  openssl passwd -6 -stdin)
 echo "$USERNAME:$PASS" > userconf.txt
@@ -102,4 +102,6 @@ if [ ! -x "$(command -v expect)" ]; then
   apt-get install -y expect
 fi
 
-./create-image "$RASPIAN_OS_FILE"
+./create-image "$RASPIOS_OS_FILE"
+./pishrink -aZ "$RASPIOS_OS_FILE.img"
+mv "$RASPIOS_OS_FILE.img" "raspios.img"

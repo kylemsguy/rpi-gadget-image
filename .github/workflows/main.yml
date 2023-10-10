@@ -1,4 +1,4 @@
-name: Create Artifact
+name: Create Raspios Image
 
 on:
   schedule:
@@ -24,6 +24,8 @@ jobs:
         run: sudo ./setup.sh raspberrypi pi raspberry nobackup
 
       - uses: actions/upload-artifact@v3
+        name: Upload Generated Image
         with:
-          path: ./*.img
+          name: raspios.img
+          path: ./raspios.img
           if-no-files-found: error
