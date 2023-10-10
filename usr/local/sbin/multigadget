@@ -7,8 +7,9 @@
 USB_VERSION="0x0200" # USB2
 
 DEVICE_CLASS="0x02" # Networking Device Class
-DEVICE_CLASS_RESET="0xEF" # Misc. Device Class
-DEVICE_SUBCLASS="0x00" # Common Class
+DEVICE_CLASS_RESET="0xEF" # Composite Device Class
+DEVICE_SUBCLASS="0x00" # Common Sub Class
+DEVICE_SUBCLASS_RESET="0x02" # Composite Device Sub Class
 DEVICE_PROTOCOL="0x01" # Interface Association Descriptor
 
 VENDOR_ID="0x1d6b"  # Linux Foundation
@@ -102,6 +103,10 @@ if [ "$ENABLE_NETWORKING" = true ]; then
   echo "" > UDC
 fi
 
+# Force Windows to re-read the descriptors.
+echo $DEVICE_CLASS_RESET > bDeviceClass
+echo $DEVICE_SUBCLASS_RESET > bDeviceSubClass
+
 # Serial
 #########
 if [ "$ENABLE_SERIAL" = true ]; then
@@ -115,7 +120,5 @@ fi
 #################
 # End functions #
 #################
-# Force Windows to re-read the descriptors.
-echo $DEVICE_CLASS_RESET > bDeviceClass
 # Power on the gadget.
 ls /sys/class/udc > UDC
