@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy_template:
+  build_image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
