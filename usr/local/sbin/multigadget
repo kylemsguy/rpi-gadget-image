@@ -88,6 +88,7 @@ echo $MS_QW_SIGN     > os_desc/qw_sign
 # Ethernet
 ###########
 if [ "$ENABLE_NETWORKING" = true ]; then
+  echo 'Enabling USB Ethernet...' | systemd-cat
   mkdir -p functions/rndis.usb0
 
   echo $HOST                  > functions/rndis.usb0/host_addr
@@ -98,9 +99,11 @@ if [ "$ENABLE_NETWORKING" = true ]; then
   ln -s functions/rndis.usb0 configs/c.1/
 
   # Allow Windows to install RNDIS drivers automatically.
+  echo 'Starting configuration early to allow Windows to detect and install drivers for the USB Ethernet Interface.'
   ls /sys/class/udc > UDC
   sleep 5
   echo "" > UDC
+  echo 'Enabled USB Ethernet.' | systemd-cat
 fi
 
 # Force Windows to re-read the descriptors.
@@ -110,6 +113,7 @@ echo $DEVICE_SUBCLASS_RESET > bDeviceSubClass
 # Serial
 #########
 if [ "$ENABLE_SERIAL" = true ]; then
+  echo 'Enabling USB Serial...' | systemd-cat
   mkdir -p functions/acm.usb0
 
   ln -s functions/acm.usb0 configs/c.1/
@@ -121,4 +125,6 @@ fi
 # End functions #
 #################
 # Power on the gadget.
+echo 'Enabling USB Gadget...' | systemd-cat
 ls /sys/class/udc > UDC
+echo 'Enabled USB Gadget.' | systemd-cat
