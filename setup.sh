@@ -31,12 +31,8 @@ if [ ! -x "$(command -v curl)" ]; then
 fi
 
 
-#RASPIOS_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
-#RASPIOS_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
-RASPIOS_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/images/ | grep -o -E 'raspios_full_arm64-20[0-9]{2}-[0-1][0-9]-[0-3][0-9]' | tail -n 1 | grep -o -E '20[0-9]{2}-[0-1][0-9]-[0-3][0-9]')
-RASPIOS_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/images/raspios_full_arm64-$RASPIOS_OS_RELEASE_DATE/ | grep -o -E "$RASPIOS_OS_RELEASE_DATE-raspios-[a-z]+-arm64-full.img" | cut -d "-" -f 5 | tail -n 1)
-
-
+RASPIOS_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
+RASPIOS_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
 
 if [[ -z "$RASPIOS_OS_VERSION" || -z "$RASPIOS_OS_RELEASE_DATE" ]]; then
   echo "Could not determine latest Raspios OS version."
