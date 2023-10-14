@@ -17,7 +17,7 @@ PRODUCT_ID="0x0104" # Multifunction Composite Gadget
 
 MANUFACTURER="VaneixusPrime"
 PRODUCT="RaspberryPi Multi-Gadget Device"
-VERSION=0x0105
+VERSION=0x0106
 SERIAL="fedcba9876543210"
 
 MAX_POWER="250" # 250 mA
@@ -29,6 +29,7 @@ CONFIG_1="RNDIS"
 
 ENABLE_SERIAL=true
 ENABLE_NETWORKING=true
+ENABLE_MTP=true
 
 # ECM Network Information
 HOST="48:6f:73:74:50:43" # "HostPC"
@@ -119,6 +120,26 @@ if [ "$ENABLE_SERIAL" = true ]; then
   ln -s functions/acm.usb0 configs/c.1/
 
   sudo systemctl enable getty@ttyGS0.service
+  echo 'Enabled USB Serial.' | systemd-cat
+fi
+
+if [ "$ENABLE_MTP" = true ]; then
+  echo 'Enabling MTP...' | systemd-cat
+  cat /etc/umtprd/umtprd.conf-template > /etc/umtprd/umtprd.conf
+
+  for home in /home/*; do
+    echo 'storage "/home/'"$home"'" "'"$home"'" "rw"' >> /etc/umtprd/umtprd.conf
+  done
+
+  mkdir functions/ffs.mtp
+
+  ln -s functions/ffs.mtp configs/c.1/
+
+  mkdir -p /dev/ffs-mtp
+  mount -t functionfs mtp /dev/ffs-mtp
+
+  umtprd &
+  echo 'Enabled USB MTP.' | systemd-cat
 fi
 
 #################

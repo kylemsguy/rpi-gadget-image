@@ -51,7 +51,7 @@ expect ":~$ "
 # send "sudo apt-get -y upgrade\n"
 
 # expect ":~$ "
-send "sudo apt-get -y install dnsmasq network-manager bridge-utils debian-keyring debian-archive-keyring apt-transport-https caddy realvnc-vnc-server || exit\n"
+send "sudo apt-get -y install dnsmasq network-manager bridge-utils debian-keyring debian-archive-keyring apt-transport-https caddy realvnc-vnc-server umtp-responder || exit\n"
 
 
 expect {
@@ -207,6 +207,16 @@ send "$file\n"
 send "EOF\n"
 expect ":~# "
 send "systemctl enable multigadget.service\n"
+
+
+########################
+# CONFIGURE MTP GADGET #
+########################
+set file [slurp "/etc/umtprd/umtprd.conf"]
+expect ":~# "
+send "cat << 'EOF' > /etc/umtprd/umtprd.conf-template\n"
+send "$file\n"
+send "EOF\n"
 
 
 ####################
