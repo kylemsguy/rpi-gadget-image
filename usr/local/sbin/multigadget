@@ -127,8 +127,9 @@ if [ "$ENABLE_MTP" = true ]; then
   echo 'Enabling MTP...' | systemd-cat
   cat /etc/umtprd/umtprd.conf-template > /etc/umtprd/umtprd.conf
 
-  for home in /home/*; do
-    echo 'storage "/home/'"$home"'" "'"$home"'" "rw"' >> /etc/umtprd/umtprd.conf
+  home_folders=(/home/*)
+  for home in "${home_folders[@]}"; do
+    echo 'storage "'"$home"'" "'"${home##*/}"'" "rw"' >> /etc/umtprd/umtprd.conf
   done
 
   mkdir functions/ffs.mtp

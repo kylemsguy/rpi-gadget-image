@@ -212,7 +212,7 @@ send "systemctl enable multigadget.service\n"
 ########################
 # CONFIGURE MTP GADGET #
 ########################
-set file [slurp "/etc/umtprd/umtprd.conf"]
+set file [slurp "etc/umtprd/umtprd.conf"]
 expect ":~# "
 send "cat << 'EOF' > /etc/umtprd/umtprd.conf-template\n"
 send "$file\n"
