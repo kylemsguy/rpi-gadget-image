@@ -14,6 +14,7 @@ Based on the great work by : Ben Hardill - https://github.com/hardillb/rpi-gadge
  - RealVNC
  - PiXEL Desktop
  - Windows Automatic Driver Setup
+ - MTP functionality(consider it experimental): The home folders will appear on your host in a new removable drive.
 
 
 ## Requirements(The script will try to install these for you using APT)
