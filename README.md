@@ -1,11 +1,11 @@
 # Raspbery Pi USB Gadget Image Builder
 
 A script to add USB Ethernet Gadget configuration as well as other Quality of Life changes to a standard Raspbian SD Card image. 
-This should work with Raspberry Pi Zero, Zero W and 4.
+This should work with RaspberryPi Zero 2 W, 4 and 5. RaspberryPi Zero (not 2) variants are not currently supported.
 
 Currently only tested on Linux, but should also run on OSx and with Docker Desktop + WSL on Windows 10
 
-Based on the great work by : Ben Hardill - https://github.com/hardillb/rpi-gadget-image-creator
+Based on the great work of Ben Hardill - https://github.com/hardillb/rpi-gadget-image-creator
 
 ## Features
  - USB-C Power + Ethernet(DNS and DHCP powered) + Serial
