@@ -31,10 +31,10 @@ if [ ! -x "$(command -v curl)" ]; then
 fi
 
 
-#RASPIOS_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
-#RASPIOS_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
-RASPIOS_OS_VERSION="bookworm"
-RASPIOS_OS_RELEASE_DATE="2024-11-19"
+RASPIOS_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
+RASPIOS_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
+#RASPIOS_OS_VERSION="bookworm"
+#RASPIOS_OS_RELEASE_DATE="2024-11-19"
 
 if [[ -z "$RASPIOS_OS_VERSION" || -z "$RASPIOS_OS_RELEASE_DATE" ]]; then
   echo "Could not determine latest Raspios OS version."
