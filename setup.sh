@@ -31,8 +31,8 @@ if [ ! -x "$(command -v curl)" ]; then
 fi
 
 
-RASPIOS_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
-RASPIOS_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_full_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
+RASPIOS_OS_VERSION=$(curl -s https://downloads.raspberrypi.org/raspios_lite_arm64/os.json | sed -n 's/.*"version": "\(.*\)"$/\1/p')
+RASPIOS_OS_RELEASE_DATE=$(curl -s https://downloads.raspberrypi.org/raspios_lite_arm64/os.json | sed -n 's/.*"release_date": "\(.*\)",$/\1/p')
 #RASPIOS_OS_VERSION="bookworm"
 #RASPIOS_OS_RELEASE_DATE="2024-11-19"
 
@@ -41,14 +41,14 @@ if [[ -z "$RASPIOS_OS_VERSION" || -z "$RASPIOS_OS_RELEASE_DATE" ]]; then
   exit 1
 fi
 
-RASPIOS_OS_FILE="$RASPIOS_OS_RELEASE_DATE-raspios-$RASPIOS_OS_VERSION-arm64-full.img"
+RASPIOS_OS_FILE="$RASPIOS_OS_RELEASE_DATE-raspios-$RASPIOS_OS_VERSION-arm64-lite.img"
 
 if [ ! -f "$RASPIOS_OS_FILE" ]; then
   echo "Could not find latest Raspios OS image locally."
   if [ ! -f "$RASPIOS_OS_FILE.bak" ]; then
     echo "Could not find backup of latest Raspios OS image."
     echo "Downloading $RASPIOS_OS_FILE.xz from https://downloads.raspberrypi.org/."
-    curl -s "https://downloads.raspberrypi.org/raspios_full_arm64/images/raspios_full_arm64-$RASPIOS_OS_RELEASE_DATE/$RASPIOS_OS_FILE.xz" -o "$RASPIOS_OS_FILE.xz"
+    curl -s "https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-$RASPIOS_OS_RELEASE_DATE/$RASPIOS_OS_FILE.xz" -o "$RASPIOS_OS_FILE.xz"
     echo "Unpacking $RASPIOS_OS_FILE.xz"
     xz -d "$RASPIOS_OS_FILE.xz"
 
